@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>System Breach</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    body {
+      background: black;
+      color: #00ff00;
+      font-family: monospace;
+      padding: 20px;
+      overflow: hidden;
+      user-select: none;
+    }
+    #terminal {
+      white-space: pre-wrap;
+      font-size: 16px;
+    }
+    #camBox {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #111;
+      color: red;
+      padding: 10px;
+      border: 2px solid red;
+      font-family: monospace;
+      display: none;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body oncontextmenu="return false" onkeydown="return false">
+
+<div id="terminal">[ HACKER MODULE V3.5 BOOTING... ]</div>
+<div id="camBox">
+  📷 Camera Feed: LIVE<br>
+  Face Detected: Unknown<br>
+  Surveillance Active
+</div>
+
+<audio id="siren" loop>
+  <source src="https://www.soundjay.com/button/beep-07.wav" type="audio/wav">
+</audio>
+
+<script>
+  const terminal = document.getElementById("terminal");
+  const camBox = document.getElementById("camBox");
+  const siren = document.getElementById("siren");
+
+  function writeLine(text, delay = 1000) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        terminal.innerHTML += `\n${text}`;
+        window.scrollTo(0, document.body.scrollHeight);
+        resolve();
+      }, delay);
+    });
+  }
+
+  async function startHackerMode() {
+    try {
+      await document.documentElement.requestFullscreen();
+    } catch (e) {
+      console.log("Fullscreen blocked");
+    }
+
+    // Autoplay siren only after user interaction
+    document.body.addEventListener("click", () => {
+      siren.play().catch(() => {});
+    }, { once: true });
+
+    await writeLine("Initializing hack protocol...");
+    await writeLine("Bypassing security...");
+    await writeLine("Connecting to target system...");
+
+    try {
+      const res = await fetch('https://ipapi.co/json');
+      const data = await res.json();
+      await writeLine(`IP Address: ${data.ip}`);
+      await writeLine(`Location: ${data.city}, ${data.region}, ${data.country_name}`);
+      await writeLine(`ISP: ${data.org}`);
+    } catch {
+      await writeLine("Location fetch failed. Switching to proxy.");
+    }
+
+    await writeLine(`User Agent: ${navigator.userAgent}`);
+    await writeLine(`Platform: ${navigator.platform}`);
+
+    await writeLine("Accessing camera...");
+    camBox.style.display = 'block';
+    await writeLine("Surveillance enabled ✅");
+
+    for (let i = 0; i <= 100; i += 20) {
+      await writeLine(`Deleting system files: ${i}%`);
+    }
+
+    await writeLine("Root access gained...");
+    await writeLine("Tracking keystrokes...");
+    await writeLine("Uploading data to darkweb...");
+    await writeLine("🟥 SYSTEM BREACH COMPLETE");
+
+    // Repeat message every 3 seconds
+    setInterval(() => {
+      terminal.innerHTML += `\n⚠ ESCAPE BLOCKED`;
+      window.scrollTo(0, document.body.scrollHeight);
+    }, 3000);
+  }
+
+  // Disable back nav
+  history.pushState(null, "", location.href);
+  window.onpopstate = function () {
+    history.go(1);
+  };
+
+  startHackerMode();
+</script>
+
+</body>
+</html>
