@@ -2,111 +2,120 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>System Breach</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HACKER V5</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
+    body {
       background: black;
       color: #00ff00;
       font-family: monospace;
-      height: 100vh;
+      padding: 20px;
       overflow: hidden;
-      cursor: none;
+      user-select: none;
     }
-    .center {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      font-size: 24px;
-      text-align: center;
+    #terminal {
+      white-space: pre-wrap;
+      font-size: 16px;
     }
-    #progress {
-      font-size: 32px;
-      margin-top: 10px;
-    }
-    .hidden {
+    #camBox {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #111;
+      color: red;
+      padding: 10px;
+      border: 2px solid red;
+      font-family: monospace;
       display: none;
+      z-index: 9999;
     }
   </style>
 </head>
-<body>
-  <div class="center" id="main">
-    <div id="message">Initializing in <span id="countdown">5</span>...</div>
-    <div id="progress" class="hidden">0%</div>
-  </div>
+<body oncontextmenu="return false" onkeydown="return false">
 
-  <script>
-    // Disable back
-    history.pushState(null, null, location.href);
-    window.onpopstate = () => history.pushState(null, null, location.href);
+<div id="terminal">[ HACKER MODULE V3.5 BOOTING... ]</div>
+<div id="camBox">
+  📷 Camera Feed: LIVE<br>
+  Face Detected: Unknown<br>
+  Surveillance Active
+</div>
 
-    // Prevent right click & inspect keys
-    document.addEventListener("contextmenu", e => e.preventDefault());
-    document.addEventListener("keydown", e => {
-      if (
-        e.key === "F12" ||
-        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J")) ||
-        (e.ctrlKey && e.key === "U") ||
-        (e.key === "F5")
-      ) {
-        e.preventDefault();
-      }
+<audio id="siren" loop>
+  <source src="https://www.soundjay.com/button/beep-07.wav" type="audio/wav">
+</audio>
+
+<script>
+  const terminal = document.getElementById("terminal");
+  const camBox = document.getElementById("camBox");
+  const siren = document.getElementById("siren");
+
+  function writeLine(text, delay = 1000) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        terminal.innerHTML += `\n${text}`;
+        window.scrollTo(0, document.body.scrollHeight);
+        resolve();
+      }, delay);
     });
+  }
 
-    // Fullscreen
-    document.documentElement.requestFullscreen?.();
-
-    // Unload warning
-    window.onbeforeunload = () => "Security process active. Leaving now may trigger trace.";
-
-    // Countdown
-    let count = 5;
-    const countdownEl = document.getElementById("countdown");
-    const messageEl = document.getElementById("message");
-    const progressEl = document.getElementById("progress");
-
-    const countdown = setInterval(() => {
-      count--;
-      countdownEl.textContent = count;
-      if (count <= 0) {
-        clearInterval(countdown);
-        messageEl.textContent = "Processing...";
-        progressEl.classList.remove("hidden");
-        loadBar();
-      }
-    }, 1000);
-
-    // Fake loading
-    let percent = 0;
-    function loadBar() {
-      const load = setInterval(() => {
-        percent += Math.floor(Math.random() * 5) + 1;
-        if (percent > 100) percent = 100;
-        progressEl.textContent = percent + "%";
-        if (percent >= 100) {
-          clearInterval(load);
-          finalStage();
-        }
-      }, 100);
+  async function startHackerMode() {
+    try {
+      await document.documentElement.requestFullscreen();
+    } catch (e) {
+      console.log("Fullscreen blocked");
     }
 
-    // Final scary message
-    function finalStage() {
-      const ua = navigator.userAgent;
-      document.getElementById("main").innerHTML = `
-        <div>
-          <h2 style="color:red;">Accessing Device Info...</h2>
-          <p><strong>User Agent:</strong><br>${ua}</p>
-          <p style="color:orange;">Device tracking initialized.<br>Movement restricted.<br>All actions monitored.</p>
-          <p style="color:red;">❗ Do not close or switch window.</p>
-        </div>
-      `;
+    // Autoplay siren only after user interaction
+    document.body.addEventListener("click", () => {
+      siren.play().catch(() => {});
+    }, { once: true });
+
+    await writeLine("Initializing hack protocol...");
+    await writeLine("Bypassing security...");
+    await writeLine("Connecting to target system...");
+
+    try {
+      const res = await fetch('https://ipapi.co/json');
+      const data = await res.json();
+      await writeLine(`IP Address: ${data.ip}`);
+      await writeLine(`Location: ${data.city}, ${data.region}, ${data.country_name}`);
+      await writeLine(`ISP: ${data.org}`);
+    } catch {
+      await writeLine("Location fetch failed. Switching to proxy.");
     }
-  </script>
+
+    await writeLine(`User Agent: ${navigator.userAgent}`);
+    await writeLine(`Platform: ${navigator.platform}`);
+
+    await writeLine("Accessing camera...");
+    camBox.style.display = 'block';
+    await writeLine("Surveillance enabled ✅");
+
+    for (let i = 0; i <= 100; i += 20) {
+      await writeLine(`Deleting system files: ${i}%`);
+    }
+
+    await writeLine("Root access gained...");
+    await writeLine("Tracking keystrokes...");
+    await writeLine("Uploading data to darkweb...");
+    await writeLine("🟥 SYSTEM BREACH COMPLETE");
+
+    // Repeat message every 3 seconds
+    setInterval(() => {
+      terminal.innerHTML += `\n⚠ ESCAPE BLOCKED`;
+      window.scrollTo(0, document.body.scrollHeight);
+    }, 3000);
+  }
+
+  // Disable back nav
+  history.pushState(null, "", location.href);
+  window.onpopstate = function () {
+    history.go(1);
+  };
+
+  startHackerMode();
+</script>
+
 </body>
 </html>
-
